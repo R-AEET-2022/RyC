@@ -1,0 +1,23 @@
+---
+title: "Pasion_de_Herrerillos"
+author: "RRM & CGC"
+date: "2022-09-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, eval=TRUE}
+library(tidyverse)
+library(here)
+```
+
+# Data management
+
+Import blue tit data
+
+```{r}
+data<-read_csv(here('blue_tit_data.csv'))
+```
