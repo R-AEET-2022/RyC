@@ -21,3 +21,10 @@ Import blue tit data
 ```{r}
 data<-read_csv(here('blue_tit_data.csv'))
 ```
+
+```{r}
+data1<-data%>%
+  filter(rear_nest_trt==7)%>%
+  filter(`Extra-pair_paternity`!= '.')
+
+```
