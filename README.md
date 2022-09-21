@@ -1,2 +1,1 @@
-# RyC
-Estudio global del orden Gymnophiona 
+# RyC 
