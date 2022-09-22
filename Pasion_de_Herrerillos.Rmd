@@ -22,8 +22,7 @@ Import blue tit data
 data<-read_csv(here('blue_tit_data.csv'))
 ```
 
-Haremos una selección de los pollos cuyos nidos no han sido manipulados, además retiraremos los casos donde no se conoce la paternidad de los pollos. 
-
+Haremos una selección de los pollos cuyos nidos no han sido manipulados, además retiraremos los casos donde no se conoce la paternidad de los pollos.
 
 ```{r}
 data1<-data%>%
@@ -32,33 +31,26 @@ data1<-data%>%
 
 ```
 
-Nos quedaremos con las variables que nos interesan para el análisis y las renombraremos:
+Nos quedaremos con las variables que nos interesan para el análisis, las renombraremos y recodificaremos las variables categóricas porque me da la gana::
 
 ```{r}
 b_tit<- data1 %>% 
   select(chick_ID = chick_ring_number,
                           year = hatch_year,
          paternity = `Extra-pair_paternity`,
-         hatch_size = d14_hatch_nest_brood_size,
+         hatch_size = d0_hatch_nest_brood_size,
          n_fledgings = number_chicks_fledged_from_rear_nest,
+         date_14 = Date_of_day14,
          tarsus = day_14_tarsus_length,
          weight = day_14_weight,
          sex = chick_sex_molec,
-         survival = chick_survival_to_first_breed_season)
-```
-
-Ahora recodificaremos las variables categóricas porque me da la gana: 
-
-```{r}
-b_tit2 <- b_tit %>%
+         survival = chick_survival_to_first_breed_season)%>%
   mutate (sex= recode(sex,
                       "1" = "M",
-                      "2" = "F"))
-b_tit2 <- b_tit2 %>%
+                      "2" = "F"))%>%
   mutate (paternity= recode(paternity,
                       "1" = "Amante",
                       "2" = "Marido"))
-
 ```
 
 Calcularemos la variable condición corporal a partir de las medidas del tarso y del peso de los pollos
@@ -68,4 +60,3 @@ Calcularemos la variable condición corporal a partir de las medidas del tarso y
 
 
 ```
-
