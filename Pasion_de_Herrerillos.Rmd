@@ -56,8 +56,8 @@ b_tit2 <- b_tit %>%
                       "2" = "F"))
 b_tit2 <- b_tit2 %>%
   mutate (paternity= recode(paternity,
-                      "1" = "B",
-                      "2" = "A"))
+                      "1" = "Amante",
+                      "2" = "Marido"))
 
 ```
 
