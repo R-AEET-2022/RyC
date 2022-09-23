@@ -26,7 +26,7 @@ Haremos una selección de los pollos cuyos nidos no han sido manipulados, ademá
 
 ```{r}
 data1<-data%>%
-  filter(rear_nest_trt==7)%>%
+  #filter(rear_nest_trt==7)%>%
   filter(`Extra-pair_paternity`!= '.')
 
 ```
@@ -56,7 +56,38 @@ b_tit<- data1 %>%
 Calcularemos la variable condición corporal a partir de las medidas del tarso y del peso de los pollos
 
 ```{r}
+b_tit %>%
+  select(date_14,tarsus,weight,survival)%>%
+  pairs()
+
+```
+
+```{r}
+ggplot(b_tit, aes(x = log(tarsus), y= log(weight)))+
+  geom_smooth(method = 'lm')+
+  geom_point(aes(color=as.factor(paternity)),
+             alpha = 0.4)
+
+```
+
+```{r}
+m1 <- glm(survival ~ paternity, family = 'binomial', data = b_tit)
+summary(m1)
+
+library(DHARMa)
+simulateResiduals(m1, plot = TRUE)
+
+library('performance')
+check_model(m1)
+```
+
+```{r}
+body_cond<- lm(weight ~ tarsus, data = b_tit)
+summary(body_cond)
+```
+
+```{r}
 
 
-
+m2<-glm(residual)
 ```
