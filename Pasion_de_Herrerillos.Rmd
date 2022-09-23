@@ -12,11 +12,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, echo=FALSE, eval=TRUE}
 library("tidyverse")
 library("here")
+library('performance')
+library('DHARMa')
 ```
 
 # Data management
 
-Import blue tit data
+Importamos los datos *"To what extent is the growth of nestling blue tits (Cyanistes caeruleus) influenced by competition with siblings?"*. Timothy H. Parker et al. (2020)
 
 ```{r}
 data<-read_csv(here('blue_tit_data.csv'))
@@ -44,7 +46,7 @@ b_tit<- data1 %>%
          tarsus = day_14_tarsus_length,
          weight = day_14_weight,
          sex = chick_sex_molec,
-         survival = chick_survival_to_first_breed_season)%>%
+         survival = (chick_survival_to_first_breed_season))%>%
   mutate (sex= recode(sex,
                       "1" = "M",
                       "2" = "F"))%>%
@@ -53,7 +55,9 @@ b_tit<- data1 %>%
                       "2" = "Marido"))
 ```
 
-Calcularemos la variable condición corporal a partir de las medidas del tarso y del peso de los pollos
+# Exploratory analysis
+
+Ploteamos las variables
 
 ```{r}
 b_tit %>%
@@ -70,8 +74,22 @@ ggplot(b_tit, aes(x = log(tarsus), y= log(weight)))+
 
 ```
 
+## Las infidelidades afectan al destino de los pollitos herrerillo??? 
+
+Calculamos una nueva variable Condición Corporal a partir de los residuos de la regresión tarso-peso
+
 ```{r}
-m1 <- glm(survival ~ paternity, family = 'binomial', data = b_tit)
+body_cond<- lm(log(weight) ~ log(tarsus), data = b_tit)
+summary(body_cond)
+
+residuals <- body_cond$residuals
+b_tit<- b_tit%>%
+  mutate(body_condition = residuals)
+head(b_tit)
+```
+
+```{r}
+m1 <- glm(body_condition ~ paternity, family = 'gaussian', data = b_tit)
 summary(m1)
 
 library(DHARMa)
@@ -82,12 +100,27 @@ check_model(m1)
 ```
 
 ```{r}
-body_cond<- lm(weight ~ tarsus, data = b_tit)
-summary(body_cond)
+hist(b_tit$body_condition)
+
+check_outliers(m1)
 ```
 
 ```{r}
 
 
-m2<-glm(residual)
+tit_glm <- glm(survival ~ paternity + body_condition, family = 'binomial', data = b_tit)
+check_model(tit_glm)
+summary(tit_glm)
+simulateResiduals(tit_glm, plot = TRUE)
+
+
+sjPlot::plot_model(tit_glm, type="pred", terms="body_condition")
+
+  
+
+
+```
+
+```{r}
+table(b_tit$paternity)
 ```
